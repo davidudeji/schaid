@@ -6,7 +6,7 @@ A robust, accessible module within a School ERP to manage courses, syllabi, time
 ## 2. Target Audience
 * **School Administrators:** Configure course catalogs, classes, and assign teachers.
 * **Teachers:** Manage lesson plans, upload course materials, create assignments, and log grades.
-* **Students:** View schedules, submit assignments, view grades, and listen to course materials.
+* **Students:** View schedules, submit assignments, view grades, and listen to course materials. Add questions and discussion
 
 ---
 
@@ -36,11 +36,11 @@ A robust, accessible module within a School ERP to manage courses, syllabi, time
 ## 4. Technical Architecture & Constraints
 
 ### 4.1 Frontend UI/UX
-* **Framework:** React / Next.js OR Vue.js using Tailwind CSS for clean layout design.
 * **Components:** 
   * Filterable dashboards for Courses.
   * Calendar components for Timetables.
   * Audio overlay bar for the Document Reader.
+  * mark progress of material studied
 
 ### 4.2 Backend & Data Storage
 * **API Structure:** RESTful endpoints or GraphQL to handle CRUD operations for courses, schedules, assignments, and grades.
@@ -55,4 +55,4 @@ A robust, accessible module within a School ERP to manage courses, syllabi, time
 ## 5. UI Layout Wireframe Guidance for AI
 * **Sidebar:** Navigation links for "My Courses", "Timetable", "Assignments", and "Gradebook".
 * **Main Panel:** Clean, tabbed view dividing "Course Info", "Syllabus Materials", and "Assessments".
-* **Reader Panel:** Clicking a file opens a distraction-free overlay. The top toolbar hosts standard audio player controls (⏸ ◀ ⏹) alongside speed/voice selectors, with the text displayed neatly below.
+* **Reader Panel:** Clicking a file opens a distraction-free overlay. The top toolbar hosts standard audio player controls (⏸ ◀ ⏹) alongside speed/voice selectors, with the text displayed neatly below. Hover across words as they are read aloud in real time
