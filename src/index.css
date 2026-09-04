@@ -813,6 +813,311 @@ td strong { color: var(--text-primary); font-weight: 600; }
 }
 
 /* ============================================================
+   COURSE & ACADEMIC MODULE
+   Tabs · Syllabus accordion · Materials · Read Aloud modal
+   Assignments · Gradebook · Discussion
+   ============================================================ */
+
+/* ── Tab strip ──────────────────────────────────────────── */
+.course-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.course-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.course-tab:hover { color: var(--text-primary); }
+
+.course-tab--active {
+  color: var(--indigo-400);
+  border-bottom-color: var(--indigo-500);
+  font-weight: 700;
+}
+
+/* ── Syllabus accordion ─────────────────────────────────── */
+.syllabus-unit {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.syllabus-unit-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--bg-surface);
+  text-align: left;
+  gap: 12px;
+  transition: background var(--transition);
+}
+
+.syllabus-unit-header:hover { background: var(--bg-elevated); }
+
+.syllabus-unit-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.syllabus-unit-num--done {
+  background: var(--emerald-glow);
+  border-color: rgba(16,185,129,0.3);
+  color: var(--emerald-400);
+}
+
+.syllabus-unit-body {
+  border-top: 1px solid var(--border);
+  padding: 16px 18px;
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.syllabus-topics {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.syllabus-materials {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Material row ───────────────────────────────────────── */
+.material-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition);
+  flex-wrap: wrap;
+}
+
+.material-row:hover { border-color: var(--border-strong); }
+
+/* ── Read Aloud Modal ───────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalIn 0.2s cubic-bezier(0.34,1.2,0.64,1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Reader toolbar */
+.reader-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.reader-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reader-settings {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.reader-slider-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reader-slider-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 64px;
+  font-family: var(--font-mono);
+}
+
+.reader-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--border-strong);
+  outline: none;
+  cursor: pointer;
+}
+
+.reader-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--indigo-500);
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+
+.reader-range::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* Reader text body with word highlighting */
+.reader-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+}
+
+.reader-word {
+  display: inline;
+  border-radius: 3px;
+  transition: background 0.08s, color 0.08s;
+  cursor: default;
+}
+
+.reader-word--active {
+  background: var(--indigo-500);
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 3px;
+}
+
+.reader-word--read {
+  color: var(--text-muted);
+}
+
+/* ── Assignment cards ───────────────────────────────────── */
+.assignment-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color var(--transition);
+}
+
+.assignment-card:hover { border-color: var(--border-strong); }
+
+.assignment-card--submitted {
+  border-left: 3px solid var(--emerald-500);
+}
+
+.assignment-card--overdue {
+  border-left: 3px solid var(--rose-500);
+  background: rgba(244,63,94,0.03);
+}
+
+.assignment-card-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.assignment-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Keyframes & utility ─────────────────────────────────── */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rbacSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+:root { --bg-hover: rgba(148, 163, 184, 0.06); }
+
+/* ============================================================
    RBAC ACCESS CONTROL DASHBOARD
    Spec: split-panel 1/3 | 2/3, responsive, self-lockout,
          role radio cards, permissions matrix, action bar

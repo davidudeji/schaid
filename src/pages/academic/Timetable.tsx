@@ -1,3 +1,4 @@
+import React from 'react';
 import { CalendarDays, MapPin, User, FlaskConical, BookOpen, MonitorPlay, GraduationCap } from 'lucide-react';
 import { timetable } from '../../types/mockData';
 import type { TimetableEntry } from '../../types';
@@ -46,8 +47,8 @@ export default function Timetable() {
 
             {/* Time rows */}
             {['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00'].map(hour => (
-              <>
-                <div key={`h-${hour}`} style={{ fontSize: 11, color: 'var(--text-muted)', paddingTop: 4, textAlign: 'right', paddingRight: 8 }}>{hour}</div>
+              <React.Fragment key={hour}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', paddingTop: 4, textAlign: 'right', paddingRight: 8 }}>{hour}</div>
                 {days.map(day => {
                   const slot = timetable.find(t => t.day === day && t.startTime === hour);
                   return (
@@ -77,7 +78,7 @@ export default function Timetable() {
                     </div>
                   );
                 })}
-              </>
+              </React.Fragment>
             ))}
           </div>
         </div>
