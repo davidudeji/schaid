@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ClipboardList, Briefcase, Package,
   BookOpen, CalendarDays, ScanLine, BarChart2,
@@ -62,7 +62,6 @@ const navSections: NavSection[] = [
 ];
 
 export default function Sidebar() {
-  const _location = useLocation();
 
   return (
     <aside className="sidebar">

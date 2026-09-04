@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   BookOpen, Users, GraduationCap, CheckCircle2, Clock, PlusCircle, Search,
   Play, Pause, Square, Volume2, ChevronDown, FileText, Upload,
-  MessageSquare, BarChart2, ListChecks, Layers, AlertCircle,
+  MessageSquare, BarChart2, Layers, AlertCircle,
   ChevronRight, Mic, SlidersHorizontal, RotateCcw, CheckSquare,
   Star, BookMarked, ClipboardList
 } from 'lucide-react';

@@ -8,10 +8,10 @@ const gatewayColors: Record<string, { color: string; bg: string }> = {
 };
 
 export default function Payments() {
-  const total   = transactions.reduce((s, t) => t.status === 'success' ? s + t.amount : s, 0);
-  const success = transactions.filter(t => t.status === 'success').length;
-  const pending = transactions.filter(t => t.status === 'pending').length;
-  const failed  = transactions.filter(t => t.status === 'failed').length;
+  const total        = transactions.reduce((s, t) => t.status === 'success' ? s + t.amount : s, 0);
+  const successCount = transactions.filter(t => t.status === 'success').length;
+  const pending      = transactions.filter(t => t.status === 'pending').length;
+  const failed       = transactions.filter(t => t.status === 'failed').length;
 
   return (
     <main className="page">
@@ -54,7 +54,11 @@ export default function Payments() {
       <div className="grid-3">
         <div className="stat-card">
           <div className="stat-card-top">
-            <div><div className="stat-label">Total Cleared</div><div className="stat-value">GHS {total.toLocaleString()}</div></div>
+            <div>
+              <div className="stat-label">Total Cleared</div>
+              <div className="stat-value">GHS {total.toLocaleString()}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{successCount} successful transactions</div>
+            </div>
             <div className="stat-icon" style={{ background:'var(--emerald-glow)' }}><CheckCircle2 size={20} style={{ color:'var(--emerald-400)' }} /></div>
           </div>
         </div>
