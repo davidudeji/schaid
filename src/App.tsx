@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import LandingPage from './pages/LandingPage';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -30,8 +31,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* Dashboard */}
+        {/* Landing page at root */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* App shell — all ERP pages under /app */}
+        <Route path="/app" element={<Layout />}>
           <Route index element={<Dashboard />} />
 
           {/* Administration */}

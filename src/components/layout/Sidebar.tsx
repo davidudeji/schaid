@@ -22,41 +22,41 @@ const navSections: NavSection[] = [
   {
     title: 'Overview',
     items: [
-      { to: '/', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
+      { to: '/app', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
     ],
   },
   {
     title: 'Administration',
     items: [
-      { to: '/admin/users', label: 'Users & RBAC', icon: <Users size={16} /> },
-      { to: '/admin/admissions', label: 'Admissions', icon: <ClipboardList size={16} />, badge: 38 },
-      { to: '/admin/hr', label: 'HR & Payroll', icon: <Briefcase size={16} /> },
-      { to: '/admin/inventory', label: 'Inventory', icon: <Package size={16} /> },
+      { to: '/app/admin/users', label: 'Users & RBAC', icon: <Users size={16} /> },
+      { to: '/app/admin/admissions', label: 'Admissions', icon: <ClipboardList size={16} />, badge: 38 },
+      { to: '/app/admin/hr', label: 'HR & Payroll', icon: <Briefcase size={16} /> },
+      { to: '/app/admin/inventory', label: 'Inventory', icon: <Package size={16} /> },
     ],
   },
   {
     title: 'Academic',
     items: [
-      { to: '/academic/courses', label: 'Courses', icon: <BookOpen size={16} /> },
-      { to: '/academic/timetable', label: 'Timetable', icon: <CalendarDays size={16} /> },
-      { to: '/academic/attendance', label: 'Attendance', icon: <ScanLine size={16} /> },
-      { to: '/academic/grades', label: 'Gradebook', icon: <BarChart2 size={16} /> },
+      { to: '/app/academic/courses', label: 'Courses', icon: <BookOpen size={16} /> },
+      { to: '/app/academic/timetable', label: 'Timetable', icon: <CalendarDays size={16} /> },
+      { to: '/app/academic/attendance', label: 'Attendance', icon: <ScanLine size={16} /> },
+      { to: '/app/academic/grades', label: 'Gradebook', icon: <BarChart2 size={16} /> },
     ],
   },
   {
     title: 'Finance',
     items: [
-      { to: '/finance/fees', label: 'Fee Collection', icon: <Receipt size={16} /> },
-      { to: '/finance/payments', label: 'Payments', icon: <CreditCard size={16} /> },
-      { to: '/finance/expenses', label: 'Expenses', icon: <TrendingDown size={16} /> },
+      { to: '/app/finance/fees', label: 'Fee Collection', icon: <Receipt size={16} /> },
+      { to: '/app/finance/payments', label: 'Payments', icon: <CreditCard size={16} /> },
+      { to: '/app/finance/expenses', label: 'Expenses', icon: <TrendingDown size={16} /> },
     ],
   },
   {
     title: 'Portals',
     items: [
-      { to: '/portals/student', label: 'Student Portal', icon: <Monitor size={16} /> },
-      { to: '/portals/parent', label: 'Parent Portal', icon: <Monitor size={16} /> },
-      { to: '/portals/notifications', label: 'Notifications', icon: <Bell size={16} /> },
+      { to: '/app/portals/student', label: 'Student Portal', icon: <Monitor size={16} /> },
+      { to: '/app/portals/parent', label: 'Parent Portal', icon: <Monitor size={16} /> },
+      { to: '/app/portals/notifications', label: 'Notifications', icon: <Bell size={16} /> },
     ],
   },
 ];
