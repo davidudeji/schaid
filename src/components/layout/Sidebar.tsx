@@ -3,8 +3,9 @@ import {
   LayoutDashboard, Users, ClipboardList, Briefcase, Package,
   BookOpen, CalendarDays, ScanLine, BarChart2,
   Receipt, CreditCard, TrendingDown,
-  Monitor, Bell, GraduationCap, LogOut, Settings
+  Monitor, Bell, LogOut, Settings
 } from 'lucide-react';
+import type { MouseEventHandler } from 'react';
 
 interface NavItem {
   to: string;
@@ -61,14 +62,12 @@ const navSections: NavSection[] = [
   },
 ];
 
-export default function Sidebar() {
-
+export default function Sidebar({ onNavigate }: { onNavigate?: MouseEventHandler<HTMLAnchorElement> }) {
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo">
-        <div className="sidebar-logo-mark">
-          <GraduationCap size={18} />
+        <div className="sidebar-logo-mark" aria-hidden="true">
+          {Array.from({ length: 9 }, (_, index) => <span key={index} />)}
         </div>
         <div className="sidebar-logo-text">
           <strong>Schaid</strong>
@@ -76,7 +75,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="sidebar-nav">
         {navSections.map((section) => (
           <div key={section.title}>
@@ -85,7 +83,8 @@ export default function Sidebar() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/'}
+                end={item.to === '/app'}
+                onClick={onNavigate}
                 className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
               >
                 {item.icon}
@@ -99,19 +98,18 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User */}
       <div className="sidebar-user">
-        <div className="avatar avatar-sm" style={{ background: '#6366F1', color: '#fff' }}>
+        <div className="avatar avatar-sm sidebar-user-avatar">
           AO
         </div>
         <div className="sidebar-user-info">
           <strong>Dr. Amara Osei</strong>
           <span>Administrator</span>
         </div>
-        <button className="topbar-icon-btn" title="Settings">
+        <button className="topbar-icon-btn" title="Settings" aria-label="Settings">
           <Settings size={14} />
         </button>
-        <button className="topbar-icon-btn" title="Log out">
+        <button className="topbar-icon-btn" title="Log out" aria-label="Log out">
           <LogOut size={14} />
         </button>
       </div>

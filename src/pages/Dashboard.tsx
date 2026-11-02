@@ -1,234 +1,285 @@
 import {
-  Users, Briefcase, BookOpen, ClipboardList,
-  TrendingUp, TrendingDown, DollarSign, UserCheck,
-  Activity, AlertCircle, CheckCircle2, Clock
+  ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, CalendarDays,
+  Check, CircleAlert, Clock3, CreditCard, Users,
 } from 'lucide-react';
-import { dashboardStats, students, admissions, transactions, revenueByMonth, expenseByMonth } from '../types/mockData';
+import { Link } from 'react-router-dom';
+import {
+  admissions, dashboardStats, expenseByMonth, revenueByMonth, timetable, transactions,
+} from '../types/mockData';
 
-function StatCard({ icon, label, value, change, changeUp, color }: {
-  icon: React.ReactNode;
+const currency = new Intl.NumberFormat('en-GH', {
+  style: 'currency',
+  currency: 'GHS',
+  maximumFractionDigits: 0,
+});
+
+function formatCompactCurrency(value: number) {
+  return `GHS ${(value / 1_000_000).toFixed(2)}m`;
+}
+
+function formatTime(time: string) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return new Intl.DateTimeFormat('en', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(2026, 0, 1, hours, minutes));
+}
+
+function Metric({
+  label,
+  value,
+  detail,
+  trend,
+  icon,
+}: {
   label: string;
   value: string;
-  change: string;
-  changeUp: boolean;
-  color: string;
+  detail: string;
+  trend: 'up' | 'down' | 'steady';
+  icon: React.ReactNode;
 }) {
+  const TrendIcon = trend === 'down' ? ArrowDownRight : ArrowUpRight;
+
   return (
-    <div className="stat-card">
-      <div className="stat-card-top">
-        <div>
-          <div className="stat-label" style={{ marginBottom: 6 }}>{label}</div>
-          <div className="stat-value">{value}</div>
-        </div>
-        <div className="stat-icon" style={{ background: `${color}22` }}>
-          <span style={{ color }}>{icon}</span>
-        </div>
+    <article className="overview-metric">
+      <div className="overview-metric-heading">
+        <span>{label}</span>
+        <span className="overview-metric-icon" aria-hidden="true">{icon}</span>
       </div>
-      <div className="stat-bottom">
-        <span className={`stat-change ${changeUp ? 'up' : 'down'}`}>
-          {changeUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-          {change}
-        </span>
-        <span className="text-muted">vs last term</span>
+      <strong className="overview-metric-value">{value}</strong>
+      <div className="overview-metric-detail">
+        {trend !== 'steady' && <TrendIcon size={14} aria-hidden="true" />}
+        <span>{detail}</span>
+      </div>
+    </article>
+  );
+}
+
+function RevenueChart() {
+  const maxValue = Math.max(...revenueByMonth.map(({ value }) => value));
+
+  return (
+    <div className="overview-chart" role="img" aria-label="Monthly fee revenue and operating expenses from April to September">
+      <div className="overview-chart-legend">
+        <span><i className="legend-revenue" /> Fee revenue</span>
+        <span><i className="legend-expenses" /> Expenses</span>
+      </div>
+      <div className="overview-chart-bars">
+        {revenueByMonth.map(({ month, value }, index) => {
+          const expense = expenseByMonth[index];
+          return (
+            <div className="overview-chart-month" key={month}>
+              <div className="overview-chart-pair">
+                <span
+                  className="overview-bar overview-bar-revenue"
+                  style={{ height: `${(value / maxValue) * 100}%` }}
+                  title={`${month} fee revenue: ${currency.format(value)}`}
+                />
+                <span
+                  className="overview-bar overview-bar-expenses"
+                  style={{ height: `${((expense?.value ?? 0) / maxValue) * 100}%` }}
+                  title={`${month} expenses: ${currency.format(expense?.value ?? 0)}`}
+                />
+              </div>
+              <span className="overview-chart-label">{month}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function MiniChart({ data, color }: { data: { month: string; value: number }[]; color: string }) {
-  const max = Math.max(...data.map(d => d.value));
-  return (
-    <div className="chart-bars">
-      {data.map(d => (
-        <div key={d.month} className="chart-bar-col">
-          <div
-            className="chart-bar"
-            style={{
-              height: `${(d.value / max) * 100}%`,
-              background: color,
-            }}
-            title={`${d.month}: ${d.value.toLocaleString()}`}
-          />
-          <span className="chart-bar-label">{d.month}</span>
-        </div>
-      ))}
-    </div>
-  );
+function admissionStatus(status: string) {
+  return status.replace('_', ' ');
 }
 
 export default function Dashboard() {
-  const s = dashboardStats;
+  const today = new Date();
+  const greeting = today.getHours() < 12 ? 'Good morning' : today.getHours() < 18 ? 'Good afternoon' : 'Good evening';
+  const todayName = new Intl.DateTimeFormat('en', { weekday: 'long' }).format(today);
+  const todayDate = new Intl.DateTimeFormat('en', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(today);
+  const todayClasses = timetable
+    .filter(({ day }) => day === todayName)
+    .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  const latestRevenue = revenueByMonth.at(-1)?.value ?? 0;
+  const latestExpenses = expenseByMonth.at(-1)?.value ?? 0;
+
   return (
-    <main className="page">
-      {/* Header */}
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1 className="page-title">Good afternoon, Dr. Osei</h1>
-          <p className="page-subtitle">Here's what's happening across the institution today.</p>
+    <main className="page overview-page">
+      <header className="overview-header">
+        <div>
+          <p className="overview-eyebrow">{todayDate}</p>
+          <h1 className="overview-title">{greeting}, Dr. Osei.</h1>
+          <p className="overview-intro">A considered view of what is happening across your institution.</p>
         </div>
-        <span className="badge badge-emerald" style={{ fontSize: 12, padding: '6px 14px' }}>
-          <Activity size={12} />
-          Live
-        </span>
-      </div>
+        <Link className="overview-primary-action" to="/app/admin/admissions">
+          Review admissions <ArrowRight size={15} />
+        </Link>
+      </header>
 
-      {/* KPI Stats */}
-      <div className="grid-4">
-        <StatCard icon={<Users size={20} />} label="Total Students" value={s.totalStudents.toLocaleString()} change="+124 enrolled" changeUp color="#6366F1" />
-        <StatCard icon={<Briefcase size={20} />} label="Total Staff" value={s.totalStaff.toLocaleString()} change="+3 hired" changeUp color="#8B5CF6" />
-        <StatCard icon={<BookOpen size={20} />} label="Active Courses" value={s.activeCourses.toString()} change="+8 added" changeUp color="#10B981" />
-        <StatCard icon={<ClipboardList size={20} />} label="Pending Admissions" value={s.pendingAdmissions.toString()} change="-12 cleared" changeUp={false} color="#F59E0B" />
-      </div>
-      <div className="grid-4">
-        <StatCard icon={<DollarSign size={20} />} label="Total Revenue" value={`GHS ${(s.totalRevenue/1000).toFixed(0)}K`} change="+18.4%" changeUp color="#10B981" />
-        <StatCard icon={<AlertCircle size={20} />} label="Outstanding Fees" value={`GHS ${(s.pendingFees/1000).toFixed(0)}K`} change="-8.2%" changeUp={false} color="#F43F5E" />
-        <StatCard icon={<UserCheck size={20} />} label="Attendance Rate" value={`${s.attendanceRate}%`} change="+3.1%" changeUp color="#0EA5E9" />
-        <StatCard icon={<Activity size={20} />} label="Average CGPA" value={s.avgCGPA.toFixed(2)} change="+0.08" changeUp color="#F59E0B" />
-      </div>
+      <section className="overview-metrics" aria-label="Institution overview">
+        <Metric
+          label="Enrolled students"
+          value={dashboardStats.totalStudents.toLocaleString()}
+          detail="+124 this term"
+          trend="up"
+          icon={<Users size={17} />}
+        />
+        <Metric
+          label="Active courses"
+          value={dashboardStats.activeCourses.toString()}
+          detail="Across all departments"
+          trend="steady"
+          icon={<BookOpen size={17} />}
+        />
+        <Metric
+          label="Attendance today"
+          value={`${dashboardStats.attendanceRate}%`}
+          detail="+3.1% from last term"
+          trend="up"
+          icon={<Check size={17} />}
+        />
+        <Metric
+          label="Fees outstanding"
+          value={formatCompactCurrency(dashboardStats.pendingFees)}
+          detail="Across current invoices"
+          trend="down"
+          icon={<CreditCard size={17} />}
+        />
+      </section>
 
-      {/* Charts row */}
-      <div className="grid-2">
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title"><TrendingUp size={15} />Fee Revenue (6 months)</span>
-            <span className="badge badge-emerald">+18.4%</span>
+      <section className="overview-primary-grid" aria-label="Academic and financial overview">
+        <article className="overview-panel overview-revenue-panel">
+          <div className="overview-panel-heading">
+            <div>
+              <p className="overview-eyebrow">Financial overview</p>
+              <h2>Revenue &amp; expenses</h2>
+            </div>
+            <Link to="/app/finance/fees" className="overview-inline-link">
+              Fee ledger <ArrowRight size={14} />
+            </Link>
           </div>
-          <div className="card-body">
-            <MiniChart data={revenueByMonth} color="#6366F1" />
+          <div className="overview-financial-totals">
+            <div>
+              <span>Revenue tracked</span>
+              <strong>{formatCompactCurrency(dashboardStats.totalRevenue)}</strong>
+            </div>
+            <div>
+              <span>Latest monthly revenue</span>
+              <strong>{currency.format(latestRevenue)}</strong>
+            </div>
+            <div>
+              <span>Latest monthly expenses</span>
+              <strong>{currency.format(latestExpenses)}</strong>
+            </div>
           </div>
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title"><TrendingDown size={15} />Operational Expenses</span>
-            <span className="badge badge-amber">+9.3%</span>
-          </div>
-          <div className="card-body">
-            <MiniChart data={expenseByMonth} color="#F59E0B" />
-          </div>
-        </div>
-      </div>
+          <RevenueChart />
+        </article>
 
-      {/* Recent activity */}
-      <div className="grid-2">
-        {/* Recent admissions */}
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title"><ClipboardList size={15} />Recent Admissions</span>
-            <a href="/admin/admissions" className="btn btn-ghost btn-sm">View all</a>
+        <article className="overview-panel overview-schedule-panel">
+          <div className="overview-panel-heading">
+            <div>
+              <p className="overview-eyebrow">Academic calendar</p>
+              <h2>Today’s timetable</h2>
+            </div>
+            <Link to="/app/academic/timetable" className="overview-inline-link" aria-label="View full timetable">
+              <CalendarDays size={16} />
+            </Link>
           </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Applicant</th>
-                  <th>Course</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {admissions.slice(0, 5).map(app => (
-                  <tr key={app.id}>
-                    <td><strong>{app.applicantName}</strong></td>
-                    <td>{app.courseApplied.replace(/^(BSc|LLB|MBBS|BA)\s/, '')}</td>
-                    <td>
-                      <span className={`badge ${
-                        app.status === 'approved' ? 'badge-emerald' :
-                        app.status === 'rejected' ? 'badge-rose' :
-                        app.status === 'under_review' ? 'badge-sky' : 'badge-amber'
-                      }`}>
-                        {app.status === 'under_review' ? 'Review' : app.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Recent transactions */}
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title"><DollarSign size={15} />Recent Transactions</span>
-            <a href="/finance/payments" className="btn btn-ghost btn-sm">View all</a>
-          </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map(tx => (
-                  <tr key={tx.id}>
-                    <td><strong>{tx.studentName.split(' ')[0]}</strong></td>
-                    <td>GHS {tx.amount.toLocaleString()}</td>
-                    <td>
-                      <span className={`badge ${
-                        tx.status === 'success' ? 'badge-emerald' :
-                        tx.status === 'failed' ? 'badge-rose' : 'badge-amber'
-                      }`}>
-                        {tx.status === 'success' ? <CheckCircle2 size={10} /> : tx.status === 'pending' ? <Clock size={10} /> : <AlertCircle size={10} />}
-                        {tx.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Top students */}
-      <div className="card">
-        <div className="card-header">
-          <span className="card-title"><Activity size={15} />Top Performing Students</span>
-          <span className="text-muted">By CGPA this semester</span>
-        </div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Student</th>
-                <th>Matric No.</th>
-                <th>Department</th>
-                <th>Level</th>
-                <th>CGPA</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...students].sort((a, b) => b.cgpa - a.cgpa).slice(0, 5).map((stu, i) => (
-                <tr key={stu.id}>
-                  <td><strong style={{ color: i === 0 ? '#F59E0B' : 'inherit' }}>#{i + 1}</strong></td>
-                  <td>
-                    <div className="flex items-center gap-2">
-                      <div className="avatar avatar-sm" style={{ background: stu.avatarColor, color: '#fff' }}>
-                        {stu.avatarInitials}
-                      </div>
-                      <strong>{stu.name}</strong>
-                    </div>
-                  </td>
-                  <td>{stu.matricNo}</td>
-                  <td>{stu.department}</td>
-                  <td><span className="badge badge-muted">{stu.level}L</span></td>
-                  <td><strong style={{ color: stu.cgpa >= 3.5 ? '#34D399' : stu.cgpa >= 3.0 ? '#FBBF24' : '#FB7185' }}>{stu.cgpa.toFixed(2)}</strong></td>
-                  <td style={{ width: 120 }}>
-                    <div className="progress-bar">
-                      <div className="progress-fill" style={{ width: `${(stu.cgpa / 4) * 100}%`, background: stu.cgpa >= 3.5 ? '#10B981' : stu.cgpa >= 3.0 ? '#F59E0B' : '#F43F5E' }} />
-                    </div>
-                  </td>
-                </tr>
+          {todayClasses.length > 0 ? (
+            <ol className="overview-schedule-list">
+              {todayClasses.map((entry) => (
+                <li className="overview-schedule-item" key={entry.id}>
+                  <div className="overview-schedule-time">
+                    <span>{formatTime(entry.startTime)}</span>
+                    <span>{formatTime(entry.endTime)}</span>
+                  </div>
+                  <div className="overview-schedule-course">
+                    <strong>{entry.courseCode}</strong>
+                    <span>{entry.courseTitle}</span>
+                    <small>{entry.venue} · {entry.lecturer}</small>
+                  </div>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </ol>
+          ) : (
+            <div className="overview-empty">
+              <CalendarDays size={20} />
+              <p>No classes are scheduled for {todayName}.</p>
+              <Link to="/app/academic/timetable">View the full timetable</Link>
+            </div>
+          )}
+        </article>
+      </section>
+
+      <section className="overview-secondary-grid" aria-label="Recent institutional activity">
+        <article className="overview-panel">
+          <div className="overview-panel-heading">
+            <div>
+              <p className="overview-eyebrow">Admissions</p>
+              <h2>Applications to review</h2>
+            </div>
+            <Link to="/app/admin/admissions" className="overview-count-link">
+              {dashboardStats.pendingAdmissions} pending <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="overview-list">
+            {admissions.slice(0, 4).map((application) => (
+              <div className="overview-list-row" key={application.id}>
+                <div className="overview-list-main">
+                  <strong>{application.applicantName}</strong>
+                  <span>{application.courseApplied}</span>
+                </div>
+                <span className={`overview-status overview-status-${application.status}`}>
+                  {admissionStatus(application.status)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="overview-panel">
+          <div className="overview-panel-heading">
+            <div>
+              <p className="overview-eyebrow">Fee collection</p>
+              <h2>Recent payments</h2>
+            </div>
+            <Link to="/app/finance/payments" className="overview-inline-link">
+              All payments <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="overview-list">
+            {transactions.slice(0, 4).map((transaction) => (
+              <div className="overview-list-row" key={transaction.id}>
+                <div className="overview-list-main">
+                  <strong>{transaction.studentName}</strong>
+                  <span>{transaction.gateway} · {transaction.date}</span>
+                </div>
+                <div className="overview-payment">
+                  <strong>{currency.format(transaction.amount)}</strong>
+                  <span className={`overview-payment-status overview-payment-${transaction.status}`}>
+                    {transaction.status === 'success' ? <Check size={12} /> : transaction.status === 'pending' ? <Clock3 size={12} /> : <CircleAlert size={12} />}
+                    {transaction.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <footer className="overview-footer">
+        <span>{dashboardStats.totalStaff} staff members · {dashboardStats.activeCourses} active courses</span>
+        <Link to="/app/academic/grades">
+          Average CGPA {dashboardStats.avgCGPA.toFixed(2)} <ArrowRight size={13} />
+        </Link>
+      </footer>
     </main>
   );
 }
